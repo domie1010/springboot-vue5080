@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ShangyemendianDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.shangyemendian_name as shangyemendianName
+        ,a.shangyemendian_uuid_number as shangyemendianUuidNumber
+        ,a.shangyemendian_photo as shangyemendianPhoto
+        ,a.shangyemendian_address as shangyemendianAddress
+        ,a.shangyemendian_types as shangyemendianTypes
+        ,a.shangyemendian_content as shangyemendianContent
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.ShangyemendianView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+
+        FROM shangyemendian  a
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.shangyemendianName != '' and params.shangyemendianName != null and params.shangyemendianName != 'null' ">
+                and a.shangyemendian_name like CONCAT('%',#{params.shangyemendianName},'%')
+            </if>
+            <if test=" params.shangyemendianUuidNumber != '' and params.shangyemendianUuidNumber != null and params.shangyemendianUuidNumber != 'null' ">
+                and a.shangyemendian_uuid_number like CONCAT('%',#{params.shangyemendianUuidNumber},'%')
+            </if>
+            <if test=" params.shangyemendianAddress != '' and params.shangyemendianAddress != null and params.shangyemendianAddress != 'null' ">
+                and a.shangyemendian_address like CONCAT('%',#{params.shangyemendianAddress},'%')
+            </if>
+            <if test="params.shangyemendianTypes != null and params.shangyemendianTypes != ''">
+                and a.shangyemendian_types = #{params.shangyemendianTypes}
+            </if>
+            <if test=" params.shangyemendianContent != '' and params.shangyemendianContent != null and params.shangyemendianContent != 'null' ">
+                and a.shangyemendian_content like CONCAT('%',#{params.shangyemendianContent},'%')
+            </if>
+
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>

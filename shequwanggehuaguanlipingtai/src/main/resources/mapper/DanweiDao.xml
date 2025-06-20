@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.DanweiDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.danwei_name as danweiName
+        ,a.danwei_uuid_number as danweiUuidNumber
+        ,a.danwei_photo as danweiPhoto
+        ,a.danwei_address as danweiAddress
+        ,a.danwei_types as danweiTypes
+        ,a.danwei_content as danweiContent
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.DanweiView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+
+        FROM danwei  a
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.danweiName != '' and params.danweiName != null and params.danweiName != 'null' ">
+                and a.danwei_name like CONCAT('%',#{params.danweiName},'%')
+            </if>
+            <if test=" params.danweiUuidNumber != '' and params.danweiUuidNumber != null and params.danweiUuidNumber != 'null' ">
+                and a.danwei_uuid_number like CONCAT('%',#{params.danweiUuidNumber},'%')
+            </if>
+            <if test=" params.danweiAddress != '' and params.danweiAddress != null and params.danweiAddress != 'null' ">
+                and a.danwei_address like CONCAT('%',#{params.danweiAddress},'%')
+            </if>
+            <if test="params.danweiTypes != null and params.danweiTypes != ''">
+                and a.danwei_types = #{params.danweiTypes}
+            </if>
+            <if test=" params.danweiContent != '' and params.danweiContent != null and params.danweiContent != 'null' ">
+                and a.danwei_content like CONCAT('%',#{params.danweiContent},'%')
+            </if>
+
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>
